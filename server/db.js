@@ -4,23 +4,6 @@ const uuid = require('uuid');
 const bcrypt = require('bcrypt');
 
 
-// //returns an array of users
-// app.get('/api/users', async (req, res, next) => {
-// });
-
-// //returns an array of products
-// app.get('/api/products', async (req, res, next) => { });
-
-// //returns an array of favorites for a user
-// app.get('/api/users/:id/favorites', async (req, res, next) => { });
-
-// //Payload: a product id. returns the created favorite with a status of 201
-// app.post('/api/users/:id/favorites', async (req, res, next) => { });
-
-// //delete a favorite for a user, returns nothing with a status of 204
-// app.delete('/api/users/:id/favorites/:id', async (req, res, next) => { });
-
-
 const createTables = async () => {
     const SQL = `
     DROP TABLE IF EXISTS users;
@@ -33,7 +16,7 @@ const createTables = async () => {
     );
     CREATE TABLE products(
         id UUID PRIMARY KEY,
-        name VARCHAR(100) UNIQUE NOT NULL,
+        name VARCHAR(100) UNIQUE NOT NULL
         );
     CREATE TABLE favorites(
         id UUID PRIMARY KEY,
@@ -54,7 +37,7 @@ const createUser = async (username, password) => {
 }
 
 const fetchUsers = async () => {
-    const SQL = `SELECT * FROM users`;
+    const SQL = `SELECT id, username FROM users;`;
     const response = await client.query(SQL);
     return response.rows;
 }
@@ -68,7 +51,7 @@ const createProduct = async (name) => {
 }
 
 const fetchProducts = async () => {
-    const SQL = `SELECT * FROM products`;
+    const SQL = `SELECT * FROM products;`;
     const response = await client.query(SQL);
     return response.rows;
 
