@@ -1,5 +1,5 @@
 const pg = require('pg');
-const client = new pg.Client('postgress.env.DATABASE_URL' || 'postgres://localhost/acme_store_db');
+const client = new pg.Client(process.env.DATABASE_URL || 'postgres://localhost/acme_store_db');
 const uuid = require('uuid');
 const bcrypt = require('bcrypt');
 
@@ -28,17 +28,17 @@ const createTables = async () => {
     DROP TABLE IF EXISTS favorites;
     CREATE TABLE users(
         id UUID PRIMARY KEY,
-        username STRING UNIQUE NOT NULL,
-        password STRING UNIQUE NOT NULL,
+        username VARCHAR(100) UNIQUE NOT NULL,
+        password VARCHAR(255) UNIQUE NOT NULL,
     );
     CREATE TABLE products(
         id UUID PRIMARY KEY,
-        name STRING UNIQUE NOT NULL,
+        name VARCHAR(100) UNIQUE NOT NULL,
         );
     CREATE TABLE favorites(
         id UUID PRIMARY KEY,
-        user_id INTEGER REFERENCES users(id),
-        product_id INTEGER REFERENCES products(id),
+        user_id UUID REFERENCES users(id) NOT NULL,
+        product_id UUID REFERENCES products(id) NOT NULL,
         CONSTRAINT user_product UNIQUE(user_id, product_id)
     );
     `;
@@ -81,6 +81,21 @@ const createFavorites = async ({ user_id, product_id }) => {
     const response = await client.query(SQL, [uuid.v4(), user_id, product_id]);
     return response.rows[0];
 }
+
+const fetchFavorites = async (id) => {
+    const SQL = `SELECT * FROM favorites
+    WHERE user_id = $1
+    `;
+    const response = await client.query(SQL, [id]);
+    return response.rows;
+}
+
+const deleteFavorites = async (id) => {
+    const SQL = `DELETE FROM favorites
+    WHERE id = $1 and user_id = $2
+    `;
+    await client.query(SQL, [ id, user_id]);
+}
     
 
 module.exports = {
@@ -90,5 +105,7 @@ module.exports = {
     createProduct,
     createFavorites,
     fetchUsers,
-    fetchProducts
+    fetchProducts,
+    fetchFavorites,
+    deleteFavorites
 };

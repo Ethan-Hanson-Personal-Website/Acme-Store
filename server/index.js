@@ -1,4 +1,4 @@
-const { client, createTables, createUser, createProduct, createFavorites, fetchUsers, fetchProducts } = require('./db');
+const { client, createTables, createUser, createProduct, createFavorites, fetchUsers, fetchProducts, fetchFavorites } = require('./db');
 
 
 const init = async()=> {
@@ -18,6 +18,14 @@ const init = async()=> {
     console.log(users);
     const products = await fetchProducts();
     console.log(products);
+
+    const createdFavorites = await Promise.all([
+        createFavorites({ user_id: Thing1.id, product_id: apple.id }),
+        createFavorites({ user_id: Thing1.id, product_id: banana.id }),
+        createFavorites({ user_id: Thing2.id, product_id: banana.id }),
+        createFavorites({ user_id: Thing3.id, product_id: cherry.id }),
+    ]);
+    console.log(await fetchFavorites(Thing1.id));
     };
 
 init();
