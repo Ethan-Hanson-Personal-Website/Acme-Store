@@ -24,16 +24,16 @@ const createTables = async () => {
     DROP TABLE IF EXISTS products;
     DROP TABLE IF EXISTS favorites;
     CREATE TABLE users(
-        id SERIAL PRIMARY KEY,
+        id UUID PRIMARY KEY,
         username STRING UNIQUE NOT NULL,
         password STRING UNIQUE NOT NULL,
     );
     CREATE TABLE products(
-        id SERIAL PRIMARY KEY,
+        id UUID PRIMARY KEY,
         name STRING UNIQUE NOT NULL,
         );
     CREATE TABLE favorites(
-        id SERIAL PRIMARY KEY,
+        id UUID PRIMARY KEY,
         user_id INTEGER REFERENCES users(id),
         product_id INTEGER REFERENCES products(id),
         CONSTRAINT user_product UNIQUE(user_id, product_id)
@@ -42,7 +42,35 @@ const createTables = async () => {
     await client.query(SQL);
 };
 
+const createUser = async (username, password) => {
+    const SQL = `
+    INSERT INTO users(username, password) VALUES($1, $2) RETURNING *;
+    `;
+    const response = await client.query(SQL, [uuid.v4(), username, password]);
+    return response.rows[0];
+}
+
+const createProduct = async (name) => {
+    const SQL = `
+    INSERT INTO products(name) VALUES($1) RETURNING *;
+    `;
+    const response = await client.query(SQL, [uuid.v4(), name]);
+    return response.rows[0];
+}
+
+const createFavorites = async ({ user_id, product_id }) => {
+    const SQL = `
+    INSERT INTO favorites(user_id, product_id) VALUES($1, $2) RETURNING *;
+    `;
+    const response = await client.query(SQL, [uuid.v4(), user_id, product_id]);
+    return response.rows[0];
+}
+    
+
 module.exports = {
     client,
-    createTables
+    createTables,
+    createUser,
+    createProduct,
+    createFavorites
 };
