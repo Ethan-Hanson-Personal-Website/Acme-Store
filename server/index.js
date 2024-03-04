@@ -1,4 +1,4 @@
-const { client, createTables, createUser, createProduct, createFavorites } = require('./db');
+const { client, createTables, createUser, createProduct, createFavorites, fetchUsers, fetchProducts } = require('./db');
 
 
 const init = async()=> {
@@ -14,8 +14,10 @@ const init = async()=> {
         createProduct({ name: 'banana'}),
         createProduct({ name: 'cherry'}),
     ]);
-    console.log(Thing1.id);  
-    console.log(apple.id);  
+    const users = await fetchUsers();
+    console.log(users);
+    const products = await fetchProducts();
+    console.log(products);
     };
 
 init();

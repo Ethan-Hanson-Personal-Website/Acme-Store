@@ -1,5 +1,7 @@
 const pg = require('pg');
 const client = new pg.Client('postgress.env.DATABASE_URL' || 'postgres://localhost/acme_store_db');
+const uuid = require('uuid');
+
 
 //returns an array of users
 app.get('/api/users', async (req, res, next) => {
